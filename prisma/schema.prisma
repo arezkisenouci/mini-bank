@@ -1,0 +1,74 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum AccountStatus {
+  active
+  suspended
+}
+
+enum TransactionType {
+  transfer
+  deposit
+}
+
+enum TransactionStatus {
+  completed
+  failed
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  passwordHash String
+  role         Role          @default(user)
+  status       AccountStatus @default(active)
+  account      Account?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("users")
+}
+
+model Account {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountAddress String   @unique // e.g. "ACCT-4821-9302"
+  balance        Decimal  @default(100.00) @db.Decimal(14, 2)
+  currency       String   @default("USD")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([accountAddress])
+  @@map("accounts")
+}
+
+model Transaction {
+  id               String            @id @default(uuid())
+  senderAddress    String
+  recipientAddress String
+  senderName       String
+  recipientName    String
+  amount           Decimal           @db.Decimal(14, 2)
+  type             TransactionType   @default(transfer)
+  status           TransactionStatus @default(completed)
+  note             String?
+  timestamp        DateTime          @default(now())
+
+  @@index([senderAddress])
+  @@index([recipientAddress])
+  @@index([timestamp])
+  @@map("transactions")
+}
