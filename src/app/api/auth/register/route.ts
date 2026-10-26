@@ -43,9 +43,10 @@ export async function POST(request: Request) {
     response.cookies.set(cookieOptions);
 
     return response;
-  } catch {
+  } catch (error: any) {
+    console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "Internal server error occurred." },
+      { error: error?.message || "Internal server error occurred." },
       { status: 500 }
     );
   }
