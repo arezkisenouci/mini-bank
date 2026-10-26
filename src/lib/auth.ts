@@ -20,23 +20,35 @@ export async function getCurrentUser(): Promise<SafeUser | null> {
 }
 
 export function setSessionCookie(userId: string) {
+  const isCrossDomain = Boolean(process.env.NEXT_PUBLIC_API_URL);
+  const isProd = process.env.NODE_ENV === "production";
+  const sameSite = (process.env.COOKIE_SAMESITE || (isCrossDomain ? "none" : "lax")) as "lax" | "none" | "strict";
+  const secure = process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === "true" : (isProd || isCrossDomain);
+
   return {
     name: SESSION_COOKIE_NAME,
     value: userId,
     httpOnly: true,
     path: "/",
-    sameSite: "lax" as const,
+    sameSite,
+    secure,
     maxAge: 60 * 60 * 24 * 7, // 7 days
   };
 }
 
 export function clearSessionCookie() {
+  const isCrossDomain = Boolean(process.env.NEXT_PUBLIC_API_URL);
+  const isProd = process.env.NODE_ENV === "production";
+  const sameSite = (process.env.COOKIE_SAMESITE || (isCrossDomain ? "none" : "lax")) as "lax" | "none" | "strict";
+  const secure = process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === "true" : (isProd || isCrossDomain);
+
   return {
     name: SESSION_COOKIE_NAME,
     value: "",
     httpOnly: true,
     path: "/",
-    sameSite: "lax" as const,
+    sameSite,
+    secure,
     maxAge: 0,
   };
 }

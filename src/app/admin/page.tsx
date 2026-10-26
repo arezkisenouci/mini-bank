@@ -44,6 +44,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { apiFetch } from "@/lib/api-client";
 import {
   Shield,
   Users,
@@ -102,7 +103,7 @@ export default function AdminPage() {
 
   async function fetchAdminData() {
     try {
-      const res = await fetch("/api/admin/users");
+      const res = await apiFetch("/api/admin/users");
       if (!res.ok) {
         if (res.status === 403 || res.status === 401) {
           setNotAdmin(true);
@@ -131,9 +132,8 @@ export default function AdminPage() {
   async function handleQuickAdminLogin() {
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await apiFetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: "admin@bank.com", password: "admin123" }),
       });
       if (res.ok) {
@@ -181,9 +181,8 @@ export default function AdminPage() {
 
     setDepositLoading(true);
     try {
-      const res = await fetch("/api/admin/deposit", {
+      const res = await apiFetch("/api/admin/deposit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           targetAddress: selectedUser.account.accountAddress,
           amount: amountNum,
@@ -224,9 +223,8 @@ export default function AdminPage() {
 
     setStatusLoading(true);
     try {
-      const res = await fetch("/api/admin/status", {
+      const res = await apiFetch("/api/admin/status", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: statusConfirmUser.id,
           status: nextStatus,
@@ -267,9 +265,8 @@ export default function AdminPage() {
 
     setDeleteLoading(true);
     try {
-      const res = await fetch("/api/admin/delete", {
+      const res = await apiFetch("/api/admin/delete", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: deleteConfirmUser.id }),
       });
 

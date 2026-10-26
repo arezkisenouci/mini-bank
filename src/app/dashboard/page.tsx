@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { apiFetch } from "@/lib/api-client";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -90,7 +91,7 @@ function DashboardContent() {
 
   async function fetchAccountData() {
     try {
-      const res = await fetch("/api/auth/me");
+      const res = await apiFetch("/api/auth/me");
       if (!res.ok) {
         router.push("/login");
         return;
@@ -163,9 +164,8 @@ function DashboardContent() {
     setTransferError(null);
 
     try {
-      const res = await fetch("/api/transfer", {
+      const res = await apiFetch("/api/transfer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           recipientAddress: recipientAddress.trim(),
           amount: parsedAmount,
@@ -213,9 +213,8 @@ function DashboardContent() {
 
     setNameLoading(true);
     try {
-      const res = await fetch("/api/user/profile", {
+      const res = await apiFetch("/api/user/profile", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: editName.trim() }),
       });
 
@@ -261,9 +260,8 @@ function DashboardContent() {
 
     setPasswordLoading(true);
     try {
-      const res = await fetch("/api/user/profile", {
+      const res = await apiFetch("/api/user/profile", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           currentPassword,
           newPassword,
@@ -297,7 +295,7 @@ function DashboardContent() {
   // Logout
   async function handleLogout() {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await apiFetch("/api/auth/logout", { method: "POST" });
       toast.success("Logged out successfully", {
         className: "bg-emerald-50 text-emerald-900 border-emerald-200",
       });
@@ -312,7 +310,7 @@ function DashboardContent() {
   async function handleDeleteAccount() {
     setDeleteLoading(true);
     try {
-      const res = await fetch("/api/user/delete", { method: "POST" });
+      const res = await apiFetch("/api/user/delete", { method: "POST" });
       const data = await res.json();
 
       if (!res.ok) {

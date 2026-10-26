@@ -18,6 +18,7 @@ import { Landmark, User, ShieldCheck, LogOut, ArrowRightLeft, Send, History, Set
 import { toast } from "sonner";
 import { SafeUser } from "@/lib/types/bank";
 import { cn } from "@/lib/utils";
+import { apiFetch } from "@/lib/api-client";
 
 interface NavbarProps {
   initialUser?: SafeUser | null;
@@ -31,7 +32,7 @@ export function Navbar({ initialUser }: NavbarProps) {
   useEffect(() => {
     async function loadMe() {
       try {
-        const res = await fetch("/api/auth/me");
+        const res = await apiFetch("/api/auth/me");
         if (res.ok) {
           const data = await res.json();
           setCurrentUser(data.user);
@@ -49,7 +50,7 @@ export function Navbar({ initialUser }: NavbarProps) {
 
   async function handleLogout() {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await apiFetch("/api/auth/logout", { method: "POST" });
       setCurrentUser(null);
       toast.success("Signed out successfully", {
         className: "bg-emerald-50 text-emerald-900 border-emerald-200",
